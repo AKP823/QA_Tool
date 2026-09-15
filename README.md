@@ -1,28 +1,11 @@
-# QA Tool (Next.js + Playwright version)
+# QA Tool
 
-Same tool as the Python version, rebuilt on Node/JavaScript: a standalone
-Next.js app where you create a project, click **Run**, and get a
-color-coded QA report — Excel or PDF — for the pages you check. Every run
-is stored in a local SQLite database, so a **Consolidated** view on each
-project page shows the latest status of every check across all runs.
-
-## What's different from the Python version
-
-Everything is now one Next.js project instead of a separate Python
-backend:
-
-| Piece | Python version | This version |
-|---|---|---|
-| Web server + pages | FastAPI + Jinja2 | Next.js (App Router) |
-| The actual browser checks | Playwright (Python) | Playwright (Node) |
-| Database | SQLite via SQLAlchemy | SQLite via better-sqlite3 |
-| Excel report | openpyxl | exceljs |
-| PDF report | Playwright `page.pdf()` | Playwright `page.pdf()` (same trick) |
-
-The checklist started as a direct port of the Python version, then grew
-further here (broken-image detection, internal broken-link crawling, and
-mobile/tablet screenshot passes) — see "What gets checked" below and
-`lib/runner.js`.
+A self-hosted QA automation tool built with Next.js and Playwright. Create a
+project, point it at a base URL, click **Run**, and get a color-coded QA
+report — Excel or PDF — covering connectivity, SSL, broken links, console
+errors, SEO basics, and responsive rendering across your pages. Every run is
+stored in a local SQLite database, so a **Consolidated** view on each project
+page shows the latest status of every check across all runs.
 
 ## What gets checked
 
@@ -56,7 +39,6 @@ want deeper coverage.
 Requires Node.js 18+ (Node 20/22 recommended).
 
 ```bash
-cd qa-tool-next
 npm install
 npx playwright install chromium   # downloads the browser binary Playwright drives
 ```
