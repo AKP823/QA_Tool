@@ -10,7 +10,10 @@ page shows the latest status of every check across all runs.
 ## What gets checked
 
 Each run drives real headless Chromium sessions against your project's
-base URL and any extra paths you configure:
+homepage, **every page listed in its sitemap** (`<base URL>/page-sitemap.xml`
+by default, or the sitemap URL set on the project; sitemap indexes are
+followed), and any extra paths you configure. Every page gets the full
+checklist:
 
 - **Connectivity** — page loads, correct HTTP status
 - **SSL/TLS** — served over HTTPS
@@ -34,6 +37,12 @@ report. The internal-link crawl is capped at 25 links per page to keep
 runs fast — raise `MAX_INTERNAL_LINKS_PER_PAGE` in `lib/runner.js` if you
 want deeper coverage.
 
+Pages are checked in parallel: 4 pages at a time by default, sharing one
+headless browser, with at most 6 link checks in flight across the whole
+run (each link is only requested once per run, even if it appears on every
+page). Set `QA_PAGE_CONCURRENCY` (1–6) or `QA_LINK_CONCURRENCY` (1–12) to
+tune this — lower it for fragile or rate-limited sites.
+
 ## Setup
 
 Requires Node.js 18+ (Node 20/22 recommended).
@@ -54,7 +63,8 @@ npm run dev
 
 Then open **http://localhost:3000**.
 
-- **New Project** — name, base URL, and optional extra paths (one per line).
+- **New Project** — name, base URL, optional sitemap URL (defaults to
+  `<base URL>/page-sitemap.xml`), and optional extra paths (one per line).
 - **Run QA Checks** — kicks off a background run; the page auto-refreshes
   until it's done.
 - **Excel / PDF** — download the report for any completed run.

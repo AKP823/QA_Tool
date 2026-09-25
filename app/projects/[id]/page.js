@@ -17,6 +17,7 @@ export default async function ProjectPage({ params }) {
     );
   }
 
+  const sitemapUrl = project.sitemap_url || new URL("/page-sitemap.xml", project.base_url).toString();
   const anyInProgress = runs.some((r) => r.status === "queued" || r.status === "running");
   // Runs are ordered newest-first, so the latest run is #1 and older ones
   // count up from there — this is a display-only number, not the DB id.
@@ -40,8 +41,12 @@ export default async function ProjectPage({ params }) {
         </button>
       </form>
       <p className="hint">
-        A run checks the homepage plus any extra pages configured for this project. This page
-        auto-refreshes while a run is in progress.
+        A run checks the homepage, every page listed in{" "}
+        <a href={sitemapUrl} target="_blank" rel="noreferrer">
+          {sitemapUrl}
+        </a>
+        , and any extra pages configured for this project. This page auto-refreshes while a run is
+        in progress.
       </p>
 
       <h2>Run History</h2>

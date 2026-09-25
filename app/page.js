@@ -26,6 +26,10 @@ export default function HomePage() {
             <input type="url" name="base_url" placeholder="https://example.com/" required />
           </label>
           <label>
+            Sitemap URL (optional — defaults to &lt;base URL&gt;/page-sitemap.xml)
+            <input type="url" name="sitemap_url" placeholder="https://example.com/page-sitemap.xml" />
+          </label>
+          <label>
             Extra pages to check (one path per line, optional)
             <textarea name="extra_paths" rows={3} placeholder={"/about\n/pricing\n/contact"} />
           </label>
