@@ -1,7 +1,7 @@
 import db from "../../../lib/db";
 
-export default function RunReportPage({ params }) {
-  const runId = Number(params.id);
+export default async function RunReportPage({ params }) {
+  const runId = Number((await params).id);
   const run = db.prepare("SELECT * FROM runs WHERE id = ?").get(runId);
 
   if (!run) {

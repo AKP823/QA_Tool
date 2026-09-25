@@ -3,7 +3,7 @@ import db from "../../../../../lib/db";
 import { executeRun } from "../../../../../lib/runs";
 
 export async function POST(request, { params }) {
-  const projectId = Number(params.id);
+  const projectId = Number((await params).id);
   const result = db
     .prepare("INSERT INTO runs (project_id, status, started_at) VALUES (?, 'queued', ?)")
     .run(projectId, new Date().toISOString());

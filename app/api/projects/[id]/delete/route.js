@@ -3,7 +3,7 @@ import db from "../../../../../lib/db";
 import { removeRunFiles } from "../../../../../lib/runs";
 
 export async function POST(request, { params }) {
-  const projectId = Number(params.id);
+  const projectId = Number((await params).id);
 
   const runs = db.prepare("SELECT id FROM runs WHERE project_id = ?").all(projectId);
   for (const r of runs) removeRunFiles(r.id);

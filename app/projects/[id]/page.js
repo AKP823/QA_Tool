@@ -1,8 +1,8 @@
 import db from "../../../lib/db";
 import { getConsolidated } from "../../../lib/runs";
 
-export default function ProjectPage({ params }) {
-  const projectId = Number(params.id);
+export default async function ProjectPage({ params }) {
+  const projectId = Number((await params).id);
   const project = db.prepare("SELECT * FROM projects WHERE id = ?").get(projectId);
   const runs = db
     .prepare("SELECT * FROM runs WHERE project_id = ? ORDER BY started_at DESC")

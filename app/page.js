@@ -1,5 +1,8 @@
 import db from "../lib/db";
 
+// Reads from SQLite on every request — never prerender at build time.
+export const dynamic = "force-dynamic";
+
 export default function HomePage() {
   const projects = db.prepare("SELECT * FROM projects ORDER BY created_at DESC").all();
 

@@ -4,7 +4,7 @@ import path from "path";
 import db from "../../../../../lib/db";
 
 export async function GET(request, { params }) {
-  const run = db.prepare("SELECT * FROM runs WHERE id = ?").get(Number(params.id));
+  const run = db.prepare("SELECT * FROM runs WHERE id = ?").get(Number((await params).id));
   if (!run || !run.pdf_path || !fs.existsSync(run.pdf_path)) {
     return new NextResponse("Report not ready yet.", { status: 404 });
   }
