@@ -26,7 +26,7 @@ export default function HomePage() {
             <input type="url" name="base_url" placeholder="https://example.com/" required />
           </label>
           <label>
-            Sitemap URL (optional — defaults to &lt;base URL&gt;/page-sitemap.xml)
+            Sitemap URL (optional — auto-detected for Yoast, Rank Math and WordPress core)
             <input type="url" name="sitemap_url" placeholder="https://example.com/page-sitemap.xml" />
           </label>
           <label>

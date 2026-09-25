@@ -17,7 +17,6 @@ export default async function ProjectPage({ params }) {
     );
   }
 
-  const sitemapUrl = project.sitemap_url || new URL("/page-sitemap.xml", project.base_url).toString();
   const anyInProgress = runs.some((r) => r.status === "queued" || r.status === "running");
   // Runs are ordered newest-first, so the latest run is #1 and older ones
   // count up from there — this is a display-only number, not the DB id.
@@ -42,9 +41,13 @@ export default async function ProjectPage({ params }) {
       </form>
       <p className="hint">
         A run checks the homepage, every page listed in{" "}
-        <a href={sitemapUrl} target="_blank" rel="noreferrer">
-          {sitemapUrl}
-        </a>
+        {project.sitemap_url ? (
+          <a href={project.sitemap_url} target="_blank" rel="noreferrer">
+            {project.sitemap_url}
+          </a>
+        ) : (
+          "the site's page sitemap (auto-detected for Yoast, Rank Math and WordPress core)"
+        )}
         , and any extra pages configured for this project. This page auto-refreshes while a run is
         in progress.
       </p>

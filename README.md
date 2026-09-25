@@ -10,9 +10,14 @@ page shows the latest status of every check across all runs.
 ## What gets checked
 
 Each run drives real headless Chromium sessions against your project's
-homepage, **every page listed in its sitemap** (`<base URL>/page-sitemap.xml`
-by default, or the sitemap URL set on the project; sitemap indexes are
-followed), and any extra paths you configure. Every page gets the full
+homepage, **every page listed in its page sitemap**, and any extra paths you
+configure. The sitemap is auto-detected — `Sitemap:` lines in robots.txt,
+then `sitemap_index.xml` (Yoast, Rank Math), `wp-sitemap.xml` (WordPress
+core) and `sitemap.xml` — and from an index only the page sitemaps
+(`page-sitemap*.xml`, `wp-sitemap-posts-page-*.xml`) are crawled. From a flat
+sitemap (one that lists every URL on the site) only top-level pages are
+taken — `/about`, not `/docs/guides/setup`. Setting a sitemap URL on the project overrides
+detection. Every page gets the full
 checklist:
 
 - **Connectivity** — page loads, correct HTTP status
@@ -23,8 +28,10 @@ checklist:
 - **Links** — **every internal link found on the page returns a
   non-error status** (crawls up to 25 same-host links per page; flags
   404s and similar)
-- **SEO** — robots.txt / sitemap.xml present and valid, title / meta
-  description / canonical tag present per page
+- **SEO** — robots.txt valid and declares a sitemap; XML sitemap found and
+  valid, with the generator named (Yoast SEO, Rank Math, WordPress core,
+  All in One SEO, SEOPress); page sitemap present in the index; title /
+  meta description / canonical tag present per page
 - **Responsive — Mobile (390×844)** and **Responsive — Tablet
   (768×1024)** — re-loads every page at each viewport, confirms it still
   loads with no new console errors, and **captures a screenshot** —
@@ -63,8 +70,8 @@ npm run dev
 
 Then open **http://localhost:3000**.
 
-- **New Project** — name, base URL, optional sitemap URL (defaults to
-  `<base URL>/page-sitemap.xml`), and optional extra paths (one per line).
+- **New Project** — name, base URL, optional sitemap URL (auto-detected
+  when blank), and optional extra paths (one per line).
 - **Run QA Checks** — kicks off a background run; the page auto-refreshes
   until it's done.
 - **Excel / PDF** — download the report for any completed run.
