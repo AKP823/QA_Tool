@@ -29,10 +29,14 @@ checklist:
   exist; tune `PERF_BUDGETS` in `lib/runner.js`). These are lab numbers from
   the QA host with several pages loading at once — compare them across runs
   rather than treating them as real-user data
-- **Security** — HSTS (with a sensible `max-age`), Content-Security-Policy,
+- **Security** — HSTS (with a sensible `max-age`), Content-Security-Policy
+  (one with no `default-src`/`script-src`, like HubSpot's default
+  `upgrade-insecure-requests`, is a WARNING),
   `X-Content-Type-Options: nosniff`, clickjacking protection
   (`X-Frame-Options` or CSP `frame-ancestors`), and no mixed content
-  (`http://` resources on an HTTPS page)
+  (`http://` resources on an HTTPS page). Headers are usually set by the
+  server or CDN, so when every page gets the same result it's reported once,
+  on the homepage, noted "Same on all N pages checked"
 - **Site Functionality** — nav present, no assets pointing at staging/dev
   hosts, **every visible `<img>` on the page actually loaded** (no broken
   images). Each failure names its cause (HTTP status, network error, not a
@@ -41,14 +45,20 @@ checklist:
   FAIL. Tracking pixels (0×0/1×1 ad and analytics beacons) and hidden
   images (closed popups, inactive placeholders) are skipped unless their
   file returns an HTTP error; the result says how many were skipped
-- **Console/JS Errors** — no console errors, no failed (4xx/5xx) network requests
+- **Console/JS Errors** — no console errors, no failed (4xx/5xx) network
+  requests. Chromium's own storage-access messages (e.g.
+  `requestStorageAccess: Permission denied` from a consent-banner iframe)
+  are ignored — they come and go between runs and aren't the site's code
 - **Links** — **every internal link found on the page returns a
   non-error status** (crawls up to 25 same-host links per page; flags
-  404s and similar)
+  404s and similar). Hidden links whose href is an unfilled template token
+  (e.g. Cookiebot's `[#DSR_FORM_URL#]`) are skipped and counted
 - **SEO** — robots.txt valid and declares a sitemap; XML sitemap found and
   valid, with the generator named (Yoast SEO, Rank Math, WordPress core,
-  All in One SEO, SEOPress); page sitemap present in the index; title /
-  meta description / canonical tag present per page
+  All in One SEO, SEOPress, HubSpot); page sitemap present in the index;
+  title / meta description / canonical tag present per page; page not set
+  to `noindex` (by `X-Robots-Tag` or `<meta name="robots">` — expected on a
+  staging/preview domain, a blocker on the live one)
 - **Responsive — Mobile (390×844)** and **Responsive — Tablet
   (768×1024)** — re-loads every page at each viewport, confirms it still
   loads with no new console errors and **doesn't scroll sideways** (naming
@@ -60,7 +70,9 @@ checklist:
 
 Screenshots are also saved as plain PNG files under
 `reports/run_<id>/screenshots/` if you want to look at them outside the
-report. The internal-link crawl is capped at 25 links per page to keep
+report.
+
+The internal-link crawl is capped at 25 links per page to keep
 runs fast — raise `MAX_INTERNAL_LINKS_PER_PAGE` in `lib/runner.js` if you
 want deeper coverage.
 
