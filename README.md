@@ -2,8 +2,9 @@
 
 A self-hosted QA automation tool built with Next.js and Playwright. Create a
 project, point it at a base URL, click **Run**, and get a color-coded QA
-report — Excel or PDF — covering connectivity, SSL, broken links, console
-errors, SEO basics, and responsive rendering across your pages. Every run is
+report — Excel or PDF — covering connectivity, SSL, performance, security
+headers, broken links, console errors, SEO basics, and responsive rendering
+across your pages. Every run is
 stored in a local SQLite database, so a **Consolidated** view on each project
 page shows the latest status of every check across all runs.
 
@@ -22,8 +23,24 @@ checklist:
 
 - **Connectivity** — page loads, correct HTTP status
 - **SSL/TLS** — served over HTTPS
+- **Performance** — time to first byte, Largest Contentful Paint, layout
+  shift during load, load-event time, and page weight (bytes transferred),
+  each rated against a good/poor budget (Core Web Vitals bands where they
+  exist; tune `PERF_BUDGETS` in `lib/runner.js`). These are lab numbers from
+  the QA host with several pages loading at once — compare them across runs
+  rather than treating them as real-user data
+- **Security** — HSTS (with a sensible `max-age`), Content-Security-Policy,
+  `X-Content-Type-Options: nosniff`, clickjacking protection
+  (`X-Frame-Options` or CSP `frame-ancestors`), and no mixed content
+  (`http://` resources on an HTTPS page)
 - **Site Functionality** — nav present, no assets pointing at staging/dev
-  hosts, **every `<img>` on the page actually loaded** (no broken images)
+  hosts, **every visible `<img>` on the page actually loaded** (no broken
+  images). Each failure names its cause (HTTP status, network error, not a
+  valid image, never requested). Visible images still downloading get 5s
+  to finish, and any still loading after that are a WARNING rather than a
+  FAIL. Tracking pixels (0×0/1×1 ad and analytics beacons) and hidden
+  images (closed popups, inactive placeholders) are skipped unless their
+  file returns an HTTP error; the result says how many were skipped
 - **Console/JS Errors** — no console errors, no failed (4xx/5xx) network requests
 - **Links** — **every internal link found on the page returns a
   non-error status** (crawls up to 25 same-host links per page; flags
@@ -34,9 +51,12 @@ checklist:
   meta description / canonical tag present per page
 - **Responsive — Mobile (390×844)** and **Responsive — Tablet
   (768×1024)** — re-loads every page at each viewport, confirms it still
-  loads with no new console errors, and **captures a screenshot** —
-  embedded directly into both the Excel and PDF reports so you can see
-  what the page actually looked like at that size, not just a pass/fail
+  loads with no new console errors and **doesn't scroll sideways** (naming
+  the elements that stick out past the screen edge), and **captures a
+  full-page screenshot** (up to 8000px tall) — embedded into the Excel
+  report at full height and into the PDF cropped to the top of the page,
+  so you can see what the page actually looked like at that size, not
+  just a pass/fail
 
 Screenshots are also saved as plain PNG files under
 `reports/run_<id>/screenshots/` if you want to look at them outside the
